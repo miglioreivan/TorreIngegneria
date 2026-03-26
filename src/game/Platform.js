@@ -183,15 +183,30 @@ export class Platform {
 
     ctx.shadowBlur = 0;
 
-    // Immagine dentro la sfera (clipping)
+    // Immagine dentro la sfera (clipping proporzionale)
     if (gulliverImage && gulliverImage.complete && gulliverImage.naturalWidth > 0) {
       ctx.save();
       ctx.beginPath();
       ctx.arc(centerX, finalY, radius - 2, 0, Math.PI * 2);
       ctx.clip();
 
-      const imgSize = (radius - 2) * 2;
-      ctx.drawImage(gulliverImage, centerX - imgSize / 2, finalY - imgSize / 2, imgSize, imgSize);
+      const imgWidth  = gulliverImage.naturalWidth;
+      const imgHeight = gulliverImage.naturalHeight;
+      const targetSize = (radius - 2) * 2;
+      
+      // Calcola dimensioni per mantenere l'aspect ratio (cover style)
+      let drawW, drawH;
+      const ratio = imgWidth / imgHeight;
+      
+      if (ratio > 1) {
+        drawH = targetSize;
+        drawW = targetSize * ratio;
+      } else {
+        drawW = targetSize;
+        drawH = targetSize / ratio;
+      }
+
+      ctx.drawImage(gulliverImage, centerX - drawW / 2, finalY - drawH / 2, drawW, drawH);
       ctx.restore();
     }
 

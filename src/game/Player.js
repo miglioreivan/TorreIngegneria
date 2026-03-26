@@ -107,7 +107,7 @@ export class Player {
     ctx.save();
     ctx.translate(this.x + this.width / 2, screenY + this.height / 2);
 
-    // ====== EFFETTO VISIVO GULLIVER BONUS ======
+    // ====== EFFETTO VISIVO GULLIVER BOOST ======
     if (this.isFlying) {
       this._drawFlyEffect(ctx);
     } else {
@@ -115,158 +115,122 @@ export class Player {
     }
 
     // === OMBRA ===
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
     ctx.beginPath();
-    ctx.ellipse(2, this.height / 2 + 5, 12, 4, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, this.height / 2 + 6, 14, 5, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // === GAMBE ===
-    const legOffset = this.onGround ? 0 : Math.sin(this.armPhase) * 3;
-
+    // === GAMBE / STIVALI MECCANICI ===
+    const legMove = this.onGround ? 0 : Math.sin(this.armPhase) * 4;
     ctx.fillStyle = '#2c3e50';
+    
+    // Gamba SX
     ctx.save();
-    ctx.translate(-6, 8);
-    ctx.rotate(legOffset * 0.1);
-    ctx.fillRect(-4, 0, 8, 16);
+    ctx.translate(-7, 8 + legMove);
+    ctx.fillRect(-5, 0, 10, 14); // Pantalone
+    ctx.fillStyle = '#7f8c8d'; 
+    ctx.fillRect(-6, 10, 12, 6);  // Stivale tech
     ctx.restore();
 
+    // Gamba DX
     ctx.save();
-    ctx.translate(6, 8);
-    ctx.rotate(-legOffset * 0.1);
-    ctx.fillRect(-4, 0, 8, 16);
+    ctx.translate(7, 8 - legMove);
+    ctx.fillRect(-5, 0, 10, 14);
+    ctx.fillStyle = '#7f8c8d';
+    ctx.fillRect(-6, 10, 12, 6);
     ctx.restore();
 
-    // === CORPO ===
-    ctx.fillStyle = '#922b21';
+    // === CORPO / TECH VEST ===
+    // Base tuta grigia
+    ctx.fillStyle = '#7f8c8d';
     ctx.beginPath();
-    ctx.roundRect(-14, -8, 28, 24, 4);
+    ctx.roundRect(-15, -10, 30, 26, 6);
     ctx.fill();
 
-    const bodyGradient = ctx.createLinearGradient(-14, -8, 14, -8);
-    bodyGradient.addColorStop(0, '#a60929');
-    bodyGradient.addColorStop(0.5, '#c0392b');
-    bodyGradient.addColorStop(1, '#a60929');
-    ctx.fillStyle = bodyGradient;
+    // Gilet/Armatura rossa UNIVPM
+    const vestGrad = ctx.createLinearGradient(-15, -10, 15, -10);
+    vestGrad.addColorStop(0, '#a60929');
+    vestGrad.addColorStop(0.5, '#c0392b');
+    vestGrad.addColorStop(1, '#a60929');
+    ctx.fillStyle = vestGrad;
     ctx.beginPath();
-    ctx.roundRect(-13, -7, 26, 22, 3);
+    ctx.roundRect(-14, -8, 28, 22, 5);
     ctx.fill();
 
-    // === DISTINTIVO ===
+    // Dettagli tecnici sul gilet
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-10, 0); ctx.lineTo(10, 0);
+    ctx.moveTo(-10, 6); ctx.lineTo(10, 6);
+    ctx.stroke();
+
+    // === DISTINTIVO GULLIVER / UNIVPM ===
     ctx.fillStyle = '#ffe66d';
     ctx.beginPath();
-    ctx.moveTo(0, -2);
-    ctx.lineTo(4, 4);
-    ctx.lineTo(-4, 4);
-    ctx.closePath();
+    ctx.arc(0, -2, 4, 0, Math.PI * 2);
     ctx.fill();
-
-    // === BRACCIA ===
-    // Durante il volo: braccia aperte in orizzontale con glow viola
-    const armAngle = this.isFlying
-      ? Math.PI / 2                              // braccia aperte (90°)
-      : (this.onGround ? 0 : Math.sin(this.armPhase) * 0.4);
-
-    if (this.isFlying) {
-      // Braccio sinistro — aperto
-      ctx.save();
-      ctx.translate(-14, 0);
-      ctx.rotate(Math.PI / 2);
-      ctx.fillStyle = '#f39c12';
-      ctx.fillRect(-3, -14, 6, 14);
-      ctx.fillStyle = '#ffeaa7';
-      ctx.beginPath();
-      ctx.arc(0, -15, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // Braccio destro — aperto
-      ctx.save();
-      ctx.translate(14, 0);
-      ctx.rotate(-Math.PI / 2);
-      ctx.fillStyle = '#f39c12';
-      ctx.fillRect(-3, -14, 6, 14);
-      ctx.fillStyle = '#ffeaa7';
-      ctx.beginPath();
-      ctx.arc(0, -15, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    } else {
-      // Braccio sinistro — normale
-      ctx.save();
-      ctx.translate(-14, 0);
-      ctx.rotate(-0.3 + armAngle);
-      ctx.fillStyle = '#f39c12';
-      ctx.fillRect(-3, -3, 6, 14);
-      ctx.fillStyle = '#ffeaa7';
-      ctx.beginPath();
-      ctx.arc(0, 12, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-
-      // Braccio destro — normale
-      ctx.save();
-      ctx.translate(14, 0);
-      ctx.rotate(0.3 - armAngle);
-      ctx.fillStyle = '#f39c12';
-      ctx.fillRect(-3, -3, 6, 14);
-      ctx.fillStyle = '#ffeaa7';
-      ctx.beginPath();
-      ctx.arc(0, 12, 4, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // === CASCO ===
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
-    ctx.beginPath();
-    ctx.arc(0, -18, 16, 0, Math.PI);
-    ctx.fill();
-
-    const helmetGradient = ctx.createRadialGradient(0, -22, 0, 0, -20, 18);
-    helmetGradient.addColorStop(0, '#e74c3c');
-    helmetGradient.addColorStop(0.7, '#c0392b');
-    helmetGradient.addColorStop(1, '#a60929');
-    ctx.fillStyle = helmetGradient;
-    ctx.beginPath();
-    ctx.arc(0, -20, 16, Math.PI, 0);
-    ctx.fill();
-
-    // Visiera
-    ctx.fillStyle = '#ffeaa7';
-    ctx.beginPath();
-    ctx.arc(0, -16, 11, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Cinturino
-    ctx.fillStyle = '#7f8c8d';
-    ctx.fillRect(-12, -11, 24, 3);
-
-    // === OCCHI ===
-    ctx.fillStyle = '#2d3436';
-    ctx.beginPath();
-    ctx.arc(-4, -17, 2.5, 0, Math.PI * 2);
-    ctx.arc(4, -17, 2.5, 0, Math.PI * 2);
-    ctx.fill();
-
+    ctx.shadowColor = '#ffe66d';
+    ctx.shadowBlur = 5;
     ctx.fillStyle = '#fff';
     ctx.beginPath();
-    ctx.arc(-3, -18, 1, 0, Math.PI * 2);
-    ctx.arc(5, -18, 1, 0, Math.PI * 2);
+    ctx.arc(0, -2, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // === BRACCIA ===
+    const armAngle = this.isFlying ? Math.PI / 2 : (this.onGround ? 0 : Math.sin(this.armPhase) * 0.4);
+    
+    // Braccio SX
+    ctx.save();
+    ctx.translate(-15, -2);
+    ctx.rotate(-0.4 + armAngle);
+    ctx.fillStyle = '#7f8c8d';
+    ctx.fillRect(-3, 0, 6, 15);
+    ctx.fillStyle = '#ffeaa7'; // pelle
+    ctx.beginPath(); ctx.arc(0, 14, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // Braccio DX
+    ctx.save();
+    ctx.translate(15, -2);
+    ctx.rotate(0.4 - armAngle);
+    ctx.fillStyle = '#7f8c8d';
+    ctx.fillRect(-3, 0, 6, 15);
+    ctx.fillStyle = '#ffeaa7';
+    ctx.beginPath(); ctx.arc(0, 14, 4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+
+    // === CASCO / VISORE FUTURISTICO ===
+    // Calotta casco
+    const helmetGrad = ctx.createLinearGradient(0, -38, 0, -18);
+    helmetGrad.addColorStop(0, '#a60929');
+    helmetGrad.addColorStop(1, '#7b061e');
+    ctx.fillStyle = helmetGrad;
+    ctx.beginPath();
+    ctx.arc(0, -22, 18, Math.PI, 0);
     ctx.fill();
 
-    // === GUANCE ===
-    ctx.fillStyle = 'rgba(231, 76, 60, 0.4)';
+    // Visore luminoso (stile Daft Punk / Cyberpunk)
+    const visorGrad = ctx.createLinearGradient(-12, -26, 12, -26);
+    visorGrad.addColorStop(0, '#2d3436');
+    visorGrad.addColorStop(0.5, '#34495e');
+    visorGrad.addColorStop(1, '#2d3436');
+    ctx.fillStyle = visorGrad;
     ctx.beginPath();
-    ctx.ellipse(-10, -12, 4, 3, 0, 0, Math.PI * 2);
-    ctx.ellipse(10, -12, 4, 3, 0, 0, Math.PI * 2);
+    ctx.roundRect(-14, -28, 28, 12, 4);
     ctx.fill();
 
-    // === SORRISO ===
-    ctx.strokeStyle = '#2d3436';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.arc(0, -13, 5, 0.2, Math.PI - 0.2);
-    ctx.stroke();
+    // Riflesso visore / HUD interno
+    ctx.strokeStyle = '#ffe66d';
+    ctx.globalAlpha = 0.6 + Math.sin(this.armPhase * 2) * 0.3;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-10, -26, 20, 8);
+    ctx.globalAlpha = 1;
+
+    // Piccoli LED sul casco
+    ctx.fillStyle = '#2ecc71';
+    ctx.beginPath(); ctx.arc(12, -22, 1.5, 0, Math.PI*2); ctx.fill();
 
     ctx.restore();
   }
