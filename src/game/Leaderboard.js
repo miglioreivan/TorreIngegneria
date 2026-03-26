@@ -11,18 +11,23 @@ export class Leaderboard {
       throw new Error('Il nome non può essere vuoto.');
     }
 
-    const { data, error } = await supabase
-      .from('scores')
-      .insert([
-        { name: name.trim().toUpperCase(), score: Math.round(score) }
-      ])
-      .select();
+    try {
+      const { data, error, status } = await supabase
+        .from('scores')
+        .insert([
+          { name: name.trim().toUpperCase(), score: Math.round(score) }
+        ])
+        .select();
 
-    if (error) {
-      console.error('[Leaderboard] Errore salvataggio:', error);
-      throw error;
+      if (error) {
+        console.error(`[Leaderboard] Errore salvataggio (Status: ${status}):`, error.message, error.details, error.hint);
+        throw error;
+      }
+      return data;
+    } catch (err) {
+      console.error('[Leaderboard] Eccezione durante salvataggio:', err);
+      throw err;
     }
-    return data;
   }
 
   /**
@@ -30,16 +35,21 @@ export class Leaderboard {
    * @param {number} limit - Massimo numero di risultati (default 100)
    */
   static async getTopScores(limit = 100) {
-    const { data, error } = await supabase
-      .from('scores')
-      .select('name, score, created_at')
-      .order('score', { ascending: false })
-      .limit(limit);
+    try {
+      const { data, error, status } = await supabase
+        .from('scores')
+        .select('name, score, created_at')
+        .order('score', { ascending: false })
+        .limit(limit);
 
-    if (error) {
-      console.error('[Leaderboard] Errore fetch:', error);
-      throw error;
+      if (error) {
+        console.error(`[Leaderboard] Errore fetch (Status: ${status}):`, error.message, error.details, error.hint);
+        throw error;
+      }
+      return data || [];
+    } catch (err) {
+      console.error('[Leaderboard] Eccezione durante fetch:', err);
+      throw err;
     }
-    return data;
   }
 }

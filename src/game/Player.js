@@ -18,6 +18,9 @@ export class Player {
     this.rotation  = 0;
     this.armPhase  = 0;
 
+    // Skin del personaggio
+    this.skin = localStorage.getItem('torreIngegneriaSkin') || 'robot';
+
     // Particelle usate durante il bonus Gulliver
     this._flyParticles = Array.from({ length: 8 }, () => this._newParticle());
   }
@@ -114,6 +117,22 @@ export class Player {
       ctx.rotate(this.rotation * Math.PI / 180);
     }
 
+    // === RENDERING BASATO SULLA SKIN ===
+    if (this.skin === 'boy') {
+      this._drawHuman(ctx, '#3498db', '#f1c40f', false); // Tuta blu, capelli biondi
+    } else if (this.skin === 'girl') {
+      this._drawHuman(ctx, '#e84393', '#2d3436', true);  // Tuta rosa, capelli neri
+    } else {
+      this._drawRobot(ctx);
+    }
+
+    ctx.restore();
+  }
+
+  /**
+   * Disegna il personaggio Robot originale
+   */
+  _drawRobot(ctx) {
     // === OMBRA ===
     ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
     ctx.beginPath();
@@ -141,13 +160,11 @@ export class Player {
     ctx.restore();
 
     // === CORPO / TECH VEST ===
-    // Base tuta grigia
     ctx.fillStyle = '#7f8c8d';
     ctx.beginPath();
     ctx.roundRect(-15, -10, 30, 26, 6);
     ctx.fill();
 
-    // Gilet/Armatura rossa UNIVPM
     const vestGrad = ctx.createLinearGradient(-15, -10, 15, -10);
     vestGrad.addColorStop(0, '#a60929');
     vestGrad.addColorStop(0.5, '#c0392b');
@@ -157,41 +174,20 @@ export class Player {
     ctx.roundRect(-14, -8, 28, 22, 5);
     ctx.fill();
 
-    // Dettagli tecnici sul gilet
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(-10, 0); ctx.lineTo(10, 0);
-    ctx.moveTo(-10, 6); ctx.lineTo(10, 6);
-    ctx.stroke();
-
-    // === DISTINTIVO GULLIVER / UNIVPM ===
-    ctx.fillStyle = '#ffe66d';
-    ctx.beginPath();
-    ctx.arc(0, -2, 4, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowColor = '#ffe66d';
-    ctx.shadowBlur = 5;
-    ctx.fillStyle = '#fff';
-    ctx.beginPath();
-    ctx.arc(0, -2, 2, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.shadowBlur = 0;
-
     // === BRACCIA ===
     const armAngle = this.isFlying ? Math.PI / 2 : (this.onGround ? 0 : Math.sin(this.armPhase) * 0.4);
     
-    // Braccio SX
+    // SX
     ctx.save();
     ctx.translate(-15, -2);
     ctx.rotate(-0.4 + armAngle);
     ctx.fillStyle = '#7f8c8d';
     ctx.fillRect(-3, 0, 6, 15);
-    ctx.fillStyle = '#ffeaa7'; // pelle
+    ctx.fillStyle = '#ffeaa7'; 
     ctx.beginPath(); ctx.arc(0, 14, 4, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
 
-    // Braccio DX
+    // DX
     ctx.save();
     ctx.translate(15, -2);
     ctx.rotate(0.4 - armAngle);
@@ -201,8 +197,7 @@ export class Player {
     ctx.beginPath(); ctx.arc(0, 14, 4, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
 
-    // === CASCO / VISORE FUTURISTICO ===
-    // Calotta casco
+    // === CASCO ===
     const helmetGrad = ctx.createLinearGradient(0, -38, 0, -18);
     helmetGrad.addColorStop(0, '#a60929');
     helmetGrad.addColorStop(1, '#7b061e');
@@ -211,8 +206,7 @@ export class Player {
     ctx.arc(0, -22, 18, Math.PI, 0);
     ctx.fill();
 
-    // Visore luminoso (stile Daft Punk / Cyberpunk)
-    const visorGrad = ctx.createLinearGradient(-12, -26, 12, -26);
+    const visorGrad = ctx.createLinearGradient(-14, -28, 14, -28);
     visorGrad.addColorStop(0, '#2d3436');
     visorGrad.addColorStop(0.5, '#34495e');
     visorGrad.addColorStop(1, '#2d3436');
@@ -220,18 +214,81 @@ export class Player {
     ctx.beginPath();
     ctx.roundRect(-14, -28, 28, 12, 4);
     ctx.fill();
+  }
 
-    // Riflesso visore / HUD interno
-    ctx.strokeStyle = '#ffe66d';
-    ctx.globalAlpha = 0.6 + Math.sin(this.armPhase * 2) * 0.3;
-    ctx.lineWidth = 1;
-    ctx.strokeRect(-10, -26, 20, 8);
-    ctx.globalAlpha = 1;
+  /**
+   * Disegna uno dei personaggi umani (Ragazzo/Ragazza)
+   */
+  _drawHuman(ctx, suitColor, hairColor, isGirl) {
+    // === OMBRA ===
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+    ctx.beginPath();
+    ctx.ellipse(0, this.height/2 + 5, 12, 4, 0, 0, Math.PI * 2);
+    ctx.fill();
 
-    // Piccoli LED sul casco
-    ctx.fillStyle = '#2ecc71';
-    ctx.beginPath(); ctx.arc(12, -22, 1.5, 0, Math.PI*2); ctx.fill();
+    const move = this.onGround ? 0 : Math.sin(this.armPhase) * 4;
 
+    // === GAMBE ===
+    ctx.fillStyle = '#2d3436';
+    ctx.fillRect(-10, 8 + move, 8, 14); // Gamba SX
+    ctx.fillRect(2, 8 - move, 8, 14);  // Gamba DX
+
+    // Scarpe
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(-11, 20 + move, 10, 4);
+    ctx.fillRect(1, 20 - move, 10, 4);
+
+    // === CORPO (Tuta UNIVPM Style) ===
+    ctx.fillStyle = suitColor;
+    ctx.beginPath();
+    ctx.roundRect(-14, -8, 28, 20, 4);
+    ctx.fill();
+
+    // Dettaglio UNIVPM (stropcia rossa)
+    ctx.fillStyle = '#a60929';
+    ctx.fillRect(-14, -2, 28, 4);
+
+    // === TESTA ===
+    ctx.fillStyle = '#ffeaa7'; // pelle
+    ctx.beginPath();
+    ctx.arc(0, -20, 14, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Capelli
+    ctx.fillStyle = hairColor;
+    if (isGirl) {
+      // Capelli lunghi ragazza
+      ctx.beginPath();
+      ctx.arc(0, -24, 16, Math.PI, 0);
+      ctx.fill();
+      ctx.fillRect(-16, -24, 8, 25);
+      ctx.fillRect(8, -24, 8, 25);
+    } else {
+      // Capelli ragazzo
+      ctx.beginPath();
+      ctx.arc(0, -24, 15, Math.PI, 0);
+      ctx.fill();
+    }
+
+    // Occhi
+    ctx.fillStyle = '#2d3436';
+    ctx.beginPath(); ctx.arc(-5, -20, 1.5, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5, -20, 1.5, 0, Math.PI*2); ctx.fill();
+
+    // === BRACCIA ===
+    const armAngle = this.onGround ? 0 : Math.sin(this.armPhase) * 0.4;
+    ctx.fillStyle = suitColor;
+    
+    ctx.save();
+    ctx.translate(-14, -4);
+    ctx.rotate(-0.2 + armAngle);
+    ctx.fillRect(-5, 0, 6, 14);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(14, -4);
+    ctx.rotate(0.2 - armAngle);
+    ctx.fillRect(-1, 0, 6, 14);
     ctx.restore();
   }
 

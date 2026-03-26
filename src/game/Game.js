@@ -227,6 +227,7 @@ export class Game {
       localStorage.setItem('torreIngegneriaHighScore', this.highScore);
     }
     this.ui.showGameOver(this.score, this.highScore);
+    this.ui.updateMiniLeaderboard();
   }
 
   setupEventListeners() {
@@ -276,8 +277,21 @@ export class Game {
         if (target.id === 'closeLb') {
           if (this.state === 'start' || this.state === 'ended') {
             if (this.state === 'start') this.ui.showStartScreen(this.highScore);
-            else this.ui.showGameOver(this.score, this.highScore);
+            else {
+              this.ui.showGameOver(this.score, this.highScore);
+              this.ui.updateMiniLeaderboard();
+            }
           }
+        }
+        if (target.closest('.char-opt')) {
+          const opt = target.closest('.char-opt');
+          const skin = opt.getAttribute('data-skin');
+          localStorage.setItem('torreIngegneriaSkin', skin);
+          if (this.player) this.player.skin = skin;
+          
+          // Aggiorna UI visiva
+          document.querySelectorAll('.char-opt').forEach(el => el.classList.remove('active'));
+          opt.classList.add('active');
         }
         if (target.id === 'saveBtn') {
           const nameInput = document.getElementById('playerName');

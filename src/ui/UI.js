@@ -46,6 +46,24 @@ export class UI {
       <div class="subtitle">ENDLESS CLIMB</div>
       <div class="highscore-display">RECORD: ${highScore}m</div>
 
+      <div class="character-selector">
+        <p>SCEGLI PERSONAGGIO</p>
+        <div class="char-options">
+          <div class="char-opt ${localStorage.getItem('torreIngegneriaSkin') === 'robot' || !localStorage.getItem('torreIngegneriaSkin') ? 'active' : ''}" data-skin="robot">
+            <div class="char-preview robot"></div>
+            <span>ROBOT</span>
+          </div>
+          <div class="char-opt ${localStorage.getItem('torreIngegneriaSkin') === 'boy' ? 'active' : ''}" data-skin="boy">
+            <div class="char-preview boy"></div>
+            <span>BOY</span>
+          </div>
+          <div class="char-opt ${localStorage.getItem('torreIngegneriaSkin') === 'girl' ? 'active' : ''}" data-skin="girl">
+            <div class="char-preview girl"></div>
+            <span>GIRL</span>
+          </div>
+        </div>
+      </div>
+
       <div class="controls-info">
         <div class="control-item">
           <span class="key-badge">PC</span>
@@ -98,6 +116,15 @@ export class UI {
         <p class="best-score">RECORD PERSONALE: ${highScore}m</p>
       </div>
 
+      <div id="miniLb" class="mini-lb-container">
+        <div class="mini-lb-title">TOP 3 GLOBALE</div>
+        <div class="mini-lb-rows">
+          <div class="mini-lb-row empty"><span>#1</span> <span>---</span> <span>0m</span></div>
+          <div class="mini-lb-row empty"><span>#2</span> <span>---</span> <span>0m</span></div>
+          <div class="mini-lb-row empty"><span>#3</span> <span>---</span> <span>0m</span></div>
+        </div>
+      </div>
+
       <div class="save-score-card">
         <h3>SALVA RECORD GLOBALE</h3>
         <div class="input-row">
@@ -115,6 +142,41 @@ export class UI {
       <div class="retry-text">CLICCA PER RICOMINCIARE</div>
     `;
     this.overlay.className = 'visible game-over-screen';
+  }
+
+  /**
+   * Aggiorna asincronamente i primi 3 record nella schermata finale
+   */
+  async updateMiniLeaderboard() {
+    const container = document.querySelector('#miniLb .mini-lb-rows');
+    if (!container) return;
+
+    try {
+      const scores = await Leaderboard.getTopScores(3);
+      
+      let html = '';
+      for (let i = 0; i < 3; i++) {
+        const s = scores[i];
+        if (s) {
+          html += `
+            <div class="mini-lb-row">
+              <span class="rank">#${i+1}</span>
+              <span class="name">${s.name}</span>
+              <span class="val">${s.score}m</span>
+            </div>`;
+        } else {
+          html += `
+            <div class="mini-lb-row empty">
+              <span class="rank">#${i+1}</span>
+              <span class="name">---</span>
+              <span class="val">0m</span>
+            </div>`;
+        }
+      }
+      container.innerHTML = html;
+    } catch (err) {
+      console.warn('[UI] Errore caricamento mini-leaderboard');
+    }
   }
 
   async showLeaderboard() {

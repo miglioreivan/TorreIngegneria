@@ -360,13 +360,22 @@ body {
   flex-direction: column;
   gap: 15px;
   align-items: center;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .menu-buttons.horizontal {
   flex-direction: row;
   justify-content: center;
-  gap: 20px;
+  gap: 15px;
+  width: 90%;
+  max-width: 360px;
+}
+
+.menu-buttons.horizontal .start-btn,
+.menu-buttons.horizontal .secondary-btn {
+  flex: 1;
+  margin-bottom: 0;
+  white-space: nowrap;
 }
 
 .secondary-btn {
@@ -388,6 +397,43 @@ body {
   border-color: #fff;
   transform: translateY(-2px);
 }
+
+/* Mini Leaderboard in Game Over */
+.mini-lb-container {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(166, 9, 41, 0.4);
+  padding: 12px;
+  width: 90%;
+  max-width: 320px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.mini-lb-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 11px;
+  color: #a60929;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.mini-lb-row {
+  display: grid;
+  grid-template-columns: 35px 1fr 60px;
+  font-size: 14px;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.mini-lb-row.empty {
+  color: #555;
+  font-style: italic;
+}
+
+.mini-lb-row .rank { color: #ffe66d; font-weight: bold; }
+.mini-lb-row .name { text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-lb-row .val { text-align: right; color: #fff; font-family: 'Rajdhani', sans-serif; font-weight: bold; }
 
 /* Save Score Card */
 .save-score-card {
@@ -532,3 +578,81 @@ body {
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 .error-msg { text-align: center; padding: 20px; }
+
+/* Character Selector */
+.character-selector {
+  margin: 20px 0;
+  width: 100%;
+}
+
+.character-selector p {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.char-options {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.char-opt {
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid transparent;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.char-opt:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+.char-opt.active {
+  background: rgba(166, 9, 41, 0.15);
+  border-color: #a60929;
+  box-shadow: 0 0 15px rgba(166, 9, 41, 0.3);
+}
+
+.char-opt span {
+  font-size: 9px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.char-opt.active span {
+  color: #fff;
+}
+
+.char-preview {
+  width: 30px;
+  height: 40px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+/* Procedural Previews simplified in CSS */
+.char-preview.robot { background: linear-gradient(to bottom, #7f8c8d 0%, #a60929 100%); border-radius: 4px; }
+.char-preview.boy   { background: linear-gradient(to bottom, #ffeaa7 0%, #3498db 100%); border-radius: 50% 50% 4px 4px; }
+.char-preview.girl  { background: linear-gradient(to bottom, #ffeaa7 0%, #e84393 100%); border-radius: 50% 50% 4px 4px; }
+
+.char-preview::after {
+  content: '';
+  position: absolute;
+  top: 5px; left: 5px; right: 5px; height: 4px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 2px;
+}
