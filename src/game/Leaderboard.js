@@ -38,7 +38,7 @@ export class Leaderboard {
     try {
       const { data, error, status } = await supabase
         .from('scores')
-        .select('name, score, created_at')
+        .select('name, score') // Rimosso created_at
         .order('score', { ascending: false })
         .limit(limit);
 

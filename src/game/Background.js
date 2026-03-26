@@ -50,6 +50,10 @@ export class Background {
 
     this.weatherType = 'clear'; // clear, rain, snow
     this.lastWeatherChange = 0;
+
+    // Autobus di linea 46 (Ancona-Engineering specific)
+    this.buses = [];
+    this.lastBusSpawn = 0;
   }
 
   update(cameraY, altitude) {
@@ -97,6 +101,25 @@ export class Background {
       if (p.y > 650) { p.y = -10; p.x = Math.random() * 400; }
       if (p.x < -10) p.x = 410;
       if (p.x > 410) p.x = -10;
+    });
+
+    // Gestione Autobus (solo a bassa quota)
+    if (altitude < 400 && Date.now() - this.lastBusSpawn > 25000 + Math.random() * 15000) {
+      const direction = Math.random() > 0.5 ? 1 : -1;
+      this.buses.push({
+        x: direction > 0 ? -150 : 550,
+        y: 400 + Math.random() * 100, // Altezza variabile nel cielo/città
+        vx: direction * (1.5 + Math.random() * 1),
+        dir: direction
+      });
+      this.lastBusSpawn = Date.now();
+    }
+
+    this.buses.forEach((bus, index) => {
+      bus.x += bus.vx;
+      if (bus.x > 600 || bus.x < -200) {
+        this.buses.splice(index, 1);
+      }
     });
   }
 
@@ -147,7 +170,64 @@ export class Background {
       this.drawWeather(ctx);
     }
 
+    // Autobus (nello sfondo urbano)
+    if (altNorm < 0.4) {
+      this.drawBuses(ctx, 1 - (altNorm / 0.4));
+    }
+
     this.drawInfiniteTower(ctx, cameraY);
+  }
+
+  drawBuses(ctx, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha * 0.7;
+    this.buses.forEach(bus => {
+      ctx.save();
+      ctx.translate(bus.x, bus.y);
+      if (bus.dir < 0) ctx.scale(-1, 1);
+
+      // Corpo Autobus (Arancione classico Univpm)
+      ctx.fillStyle = '#e67e22';
+      ctx.beginPath();
+      ctx.roundRect(-60, -15, 120, 30, 4);
+      ctx.fill();
+      ctx.strokeStyle = '#d35400';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Fascia scura inferiore
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(-60, 5, 120, 10);
+
+      // Finestre
+      ctx.fillStyle = '#2d3436';
+      for(let i=0; i<5; i++) {
+        ctx.fillRect(-55 + i*23, -10, 18, 12);
+      }
+
+      // Fanale anteriore
+      ctx.fillStyle = '#fffbe6';
+      ctx.beginPath();
+      ctx.arc(58, 5, 3, 0, Math.PI*2);
+      ctx.fill();
+
+      // Numero 46
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 10px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('46', 40, 2);
+
+      // Linea decorativa
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(-58, 2);
+      ctx.lineTo(30, 2);
+      ctx.stroke();
+
+      ctx.restore();
+    });
+    ctx.restore();
   }
 
   drawSpaceObjects(ctx, intensity) {

@@ -68,20 +68,14 @@ export class Game {
     this.platforms.push(
       new Platform(CONFIG.CANVAS_WIDTH / 2 - 45, CONFIG.CANVAS_HEIGHT - 80, 'normal', 90)
     );
-
-    let y = CONFIG.CANVAS_HEIGHT - 150;
-    for (let i = 0; i < 25; i++) {
-      const platform = createRandomPlatform(i);
-      platform.y = y;
-      this.platforms.push(platform);
-      y -= 50 + Math.random() * 30;
-    }
+    this.generateInitialPlatforms();
 
     this.cameraY       = 0;
     this.targetCameraY = 0;
     this.score         = 0;
     this.currentAltitude = CONFIG.BASE_ALTITUDE;
     this.lastGulliverAltitude = -Infinity;
+    this.lastGulliverAlt = -Infinity; // Reset for new platform generation
 
     this.gulliverBoost = {
       active:        false,
@@ -92,15 +86,72 @@ export class Game {
     };
   }
 
-  generatePlatforms() {
-    const minY = this.platforms.length > 0
-      ? Math.min(...this.platforms.map(p => p.y))
-      : this.cameraY;
+  getAltitude() {
+    return CONFIG.BASE_ALTITUDE + Math.abs(this.cameraY) / CONFIG.PIXELS_PER_METER;
+  }
 
-    if (minY > this.cameraY - CONFIG.CANVAS_HEIGHT) {
-      const newPlatform = createRandomPlatform(this.platforms.length);
-      newPlatform.y = minY - (50 + Math.random() * 30);
-      this.platforms.push(newPlatform);
+  canAddGulliver(alt) {
+    return alt - this.lastGulliverAlt >= CONFIG.GULLIVER_MIN_ALTITUDE_GAP;
+  }
+
+  createPlatform(y, type = null) {
+    const alt = this.getAltitude();
+    const diffFactor = Math.min(alt / CONFIG.DIFF.MAX_HEIGHT_DIFFICULTY, 1);
+
+    // Larghezza progressivamente minore
+    const width = CONFIG.DIFF.START_WIDTH - (CONFIG.DIFF.START_WIDTH - CONFIG.DIFF.END_WIDTH) * diffFactor;
+    
+    // Tipi speciali più frequenti salendo
+    if (!type) {
+      const prob = CONFIG.DIFF.SPECIAL_START_PROB + (CONFIG.DIFF.SPECIAL_END_PROB - CONFIG.DIFF.SPECIAL_START_PROB) * diffFactor;
+      if (Math.random() < prob) {
+        const types = ['moving', 'crumbling', 'bouncy'];
+        type = types[Math.floor(Math.random() * types.length)];
+      } else {
+        type = 'normal';
+      }
+    }
+
+    // BONUS GULLIVER: Meno frequente salendo (non troppo, ma ridotto)
+    const gulliverProb = 0.2 - (0.12 * diffFactor);
+    if (this.canAddGulliver(alt) && Math.random() < gulliverProb) {
+      type = 'gulliver';
+      this.lastGulliverAlt = alt;
+    }
+
+    return new Platform(
+      Math.random() * (CONFIG.CANVAS_WIDTH - width),
+      y,
+      type,
+      width
+    );
+  }
+
+  generateInitialPlatforms() {
+    let y = CONFIG.CANVAS_HEIGHT - 50;
+    // The first platform is already added in initGame, so we start generating from above it.
+    // We need to ensure there's enough platforms to fill the screen initially.
+    while (y > -CONFIG.CANVAS_HEIGHT * 2) { // Generate enough to fill a few screens
+      const alt = this.getAltitude(); // This will be CONFIG.BASE_ALTITUDE initially
+      const diffFactor = Math.min(alt / CONFIG.DIFF.MAX_HEIGHT_DIFFICULTY, 1);
+      const gap = CONFIG.DIFF.START_GAP + (CONFIG.DIFF.END_GAP - CONFIG.DIFF.START_GAP) * diffFactor;
+      
+      y -= gap + Math.random() * 30;
+      this.platforms.push(this.createPlatform(y));
+    }
+  }
+
+  updatePlatforms() {
+    // Generate new platforms above
+    const highestPlatformY = this.platforms.length > 0 ? Math.min(...this.platforms.map(p => p.y)) : this.cameraY;
+
+    if (highestPlatformY > this.cameraY - CONFIG.CANVAS_HEIGHT) {
+      const alt = this.getAltitude();
+      const diffFactor = Math.min(alt / CONFIG.DIFF.MAX_HEIGHT_DIFFICULTY, 1);
+      const gap = CONFIG.DIFF.START_GAP + (CONFIG.DIFF.END_GAP - CONFIG.DIFF.START_GAP) * diffFactor;
+      
+      const newY = highestPlatformY - (gap + Math.random() * 30);
+      this.platforms.push(this.createPlatform(newY));
     }
 
     this.platforms = this.platforms.filter(p =>

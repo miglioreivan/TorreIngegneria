@@ -21,6 +21,17 @@ export const CONFIG = {
   GULLIVER_MIN_DISTANCE: 100, // Distanza minima tra due bonus (m)
   PLANE_INTERVAL: 5,       // Ogni quanti metri mostrare la quota
 
+  // Difficoltà Dinamica
+  DIFF: {
+    MAX_HEIGHT_DIFFICULTY: 2000, // Quota a cui si raggiunge la difficoltà massima
+    START_WIDTH: 100,
+    END_WIDTH: 65,
+    START_GAP: 70,
+    END_GAP: 140,
+    SPECIAL_START_PROB: 0.1,
+    SPECIAL_END_PROB: 0.5
+  },
+
   // === A/B TEST ===
   // Imposta a false per disabilitare completamente il bonus Gulliver
   GULLIVER_ENABLED: true,
