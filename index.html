@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1a1a2e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Torre di Ingegneria - Climbing Game</title>
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  
+  <!-- Stili -->
+  <link rel="stylesheet" href="./src/style.css">
+</head>
+<body>
+  <div id="gameContainer">
+    <!-- Canvas di gioco -->
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- HUD -->
+    <div id="ui">
+      <div class="hud-box altitude-box">
+        <span class="hud-label">QUOTA</span>
+        <span class="hud-value">
+          <span id="altitude">160</span><span class="hud-unit">m</span>
+        </span>
+      </div>
+      <div class="hud-box score-box">
+        <span class="hud-label">RECORD</span>
+        <span class="hud-value">
+          <span id="score">0</span><span class="hud-unit">m</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- Overlay (start/game over) -->
+    <div id="overlay"></div>
+  </div>
+
+  <!-- Entry point -->
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

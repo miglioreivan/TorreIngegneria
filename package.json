@@ -1,0 +1,14 @@
+{
+  "name": "torre-di-ingegneria-game",
+  "version": "1.0.0",
+  "description": "Endless climbing game - Torre di Ingegneria UNIVPM",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
