@@ -638,21 +638,7 @@ body {
 .char-preview {
   width: 30px;
   height: 40px;
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
-}
-
-/* Procedural Previews simplified in CSS */
-.char-preview.robot { background: linear-gradient(to bottom, #7f8c8d 0%, #a60929 100%); border-radius: 4px; }
-.char-preview.boy   { background: linear-gradient(to bottom, #ffeaa7 0%, #3498db 100%); border-radius: 50% 50% 4px 4px; }
-.char-preview.girl  { background: linear-gradient(to bottom, #ffeaa7 0%, #e84393 100%); border-radius: 50% 50% 4px 4px; }
-
-.char-preview::after {
-  content: '';
-  position: absolute;
-  top: 5px; left: 5px; right: 5px; height: 4px;
-  background: rgba(0,0,0,0.3);
-  border-radius: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

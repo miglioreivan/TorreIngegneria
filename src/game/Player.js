@@ -119,11 +119,11 @@ export class Player {
 
     // === RENDERING BASATO SULLA SKIN ===
     if (this.skin === 'boy') {
-      this._drawHuman(ctx, '#3498db', '#f1c40f', false); // Tuta blu, capelli biondi
+      this._drawBoyModern(ctx);
     } else if (this.skin === 'girl') {
-      this._drawHuman(ctx, '#e84393', '#2d3436', true);  // Tuta rosa, capelli neri
+      this._drawGirlModern(ctx);
     } else {
-      this._drawRobot(ctx);
+      this._drawRobotModern(ctx);
     }
 
     ctx.restore();
@@ -132,68 +132,51 @@ export class Player {
   /**
    * Disegna il personaggio Robot originale
    */
-  _drawRobot(ctx) {
-    // Ombra
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  _drawRobotModern(ctx) {
+    const move = this.onGround ? 0 : Math.sin(this.armPhase) * 3;
+
+    // Corpo
+    ctx.fillStyle = "#9aa5b1";
     ctx.beginPath();
-    ctx.ellipse(0, this.height / 2 + 6, 14, 5, 0, 0, Math.PI * 2);
+    ctx.roundRect(-14, -4, 28, 22, 8);
     ctx.fill();
 
-    const move = this.onGround ? 0 : Math.sin(this.armPhase) * 4;
-
-    // Corpo principale (forma più morbida)
-    ctx.fillStyle = '#8e9eab';
+    // Testa grande
+    ctx.fillStyle = "#cfd6dd";
     ctx.beginPath();
-    ctx.roundRect(-14, -6, 28, 26, 8);
-    ctx.fill();
-
-    // Dettaglio centrale luminoso
-    const core = ctx.createRadialGradient(0, 4, 2, 0, 4, 10);
-    core.addColorStop(0, '#ff7675');
-    core.addColorStop(1, '#d63031');
-    ctx.fillStyle = core;
-    ctx.beginPath();
-    ctx.arc(0, 4, 6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Testa più grande (stile cartoon)
-    ctx.fillStyle = '#b2bec3';
-    ctx.beginPath();
-    ctx.roundRect(-16, -32, 32, 24, 10);
+    ctx.roundRect(-18, -32, 36, 30, 12);
     ctx.fill();
 
     // Visore
-    ctx.fillStyle = '#2d3436';
+    ctx.fillStyle = "#2d3436";
     ctx.beginPath();
-    ctx.roundRect(-12, -26, 24, 12, 6);
+    ctx.roundRect(-12, -24, 24, 12, 6);
     ctx.fill();
 
     // Occhi LED
-    ctx.fillStyle = '#74b9ff';
-    ctx.beginPath(); ctx.arc(-6, -20, 3, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(6, -20, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#74b9ff";
+    ctx.beginPath(); ctx.arc(-6, -18, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(6, -18, 3, 0, Math.PI * 2); ctx.fill();
 
     // Braccia
-    const armAngle = this.isFlying ? Math.PI / 2 : Math.sin(this.armPhase) * 0.3;
+    const armAngle = Math.sin(this.armPhase) * 0.25;
 
-    ctx.fillStyle = '#b2bec3';
+    ctx.fillStyle = "#cfd6dd";
 
-    // SX
     ctx.save();
     ctx.translate(-16, -2);
-    ctx.rotate(-0.3 + armAngle);
-    ctx.fillRect(-3, 0, 6, 16);
+    ctx.rotate(-0.2 + armAngle);
+    ctx.fillRect(-3, 0, 6, 14);
     ctx.restore();
 
-    // DX
     ctx.save();
     ctx.translate(16, -2);
-    ctx.rotate(0.3 - armAngle);
-    ctx.fillRect(-3, 0, 6, 16);
+    ctx.rotate(0.2 - armAngle);
+    ctx.fillRect(-3, 0, 6, 14);
     ctx.restore();
 
     // Gambe
-    ctx.fillStyle = '#636e72';
+    ctx.fillStyle = "#6c7a89";
     ctx.fillRect(-10, 10 + move, 8, 14);
     ctx.fillRect(2, 10 - move, 8, 14);
   }
@@ -201,74 +184,120 @@ export class Player {
   /**
    * Disegna uno dei personaggi umani (Ragazzo/Ragazza)
    */
-  _drawHuman(ctx, suitColor, hairColor, isGirl) {
-    // Ombra
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-    ctx.beginPath();
-    ctx.ellipse(0, this.height / 2 + 5, 12, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    const move = this.onGround ? 0 : Math.sin(this.armPhase) * 4;
+  _drawBoyModern(ctx) {
+    const move = this.onGround ? 0 : Math.sin(this.armPhase) * 3;
 
     // Corpo
-    ctx.fillStyle = suitColor;
+    ctx.fillStyle = "#3498db";
     ctx.beginPath();
-    ctx.roundRect(-12, -6, 24, 22, 6);
+    ctx.roundRect(-12, -4, 24, 22, 6);
     ctx.fill();
 
     // Fascia UNIVPM
-    ctx.fillStyle = '#a60929';
-    ctx.fillRect(-12, 0, 24, 4);
+    ctx.fillStyle = "#a60929";
+    ctx.fillRect(-12, 2, 24, 4);
 
-    // Testa più grande (stile cartoon)
-    ctx.fillStyle = '#ffeaa7';
+    // Testa grande
+    ctx.fillStyle = "#ffeaa7";
     ctx.beginPath();
-    ctx.arc(0, -20, 16, 0, Math.PI * 2);
+    ctx.arc(0, -18, 16, 0, Math.PI * 2);
     ctx.fill();
 
-    // Capelli
-    ctx.fillStyle = hairColor;
-    if (isGirl) {
-      ctx.beginPath();
-      ctx.arc(0, -24, 18, Math.PI, 0);
-      ctx.fill();
-      ctx.fillRect(-18, -24, 8, 26);
-      ctx.fillRect(10, -24, 8, 26);
-    } else {
-      ctx.beginPath();
-      ctx.arc(0, -26, 18, Math.PI, 0);
-      ctx.fill();
-    }
+    // Capelli corti moderni
+    ctx.fillStyle = "#2d3436";
+    ctx.beginPath();
+    ctx.arc(0, -22, 18, Math.PI, 0);
+    ctx.fill();
 
-    // Occhi più grandi
-    ctx.fillStyle = '#2d3436';
-    ctx.beginPath(); ctx.arc(-6, -20, 2.5, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(6, -20, 2.5, 0, Math.PI * 2); ctx.fill();
+    // Occhi grandi e carini
+    ctx.fillStyle = "#2d3436";
+    ctx.beginPath(); ctx.arc(-6, -18, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(6, -18, 3, 0, Math.PI * 2); ctx.fill();
 
     // Braccia
-    const armAngle = Math.sin(this.armPhase) * 0.3;
+    const armAngle = Math.sin(this.armPhase) * 0.25;
 
-    ctx.fillStyle = suitColor;
+    ctx.fillStyle = "#3498db";
 
     ctx.save();
-    ctx.translate(-14, -4);
-    ctx.rotate(-0.2 + armAngle);
-    ctx.fillRect(-4, 0, 6, 14);
+    ctx.translate(-14, -2);
+    ctx.rotate(-0.15 + armAngle);
+    ctx.fillRect(-3, 0, 6, 14);
     ctx.restore();
 
     ctx.save();
-    ctx.translate(14, -4);
-    ctx.rotate(0.2 - armAngle);
-    ctx.fillRect(-2, 0, 6, 14);
+    ctx.translate(14, -2);
+    ctx.rotate(0.15 - armAngle);
+    ctx.fillRect(-3, 0, 6, 14);
     ctx.restore();
 
     // Gambe
-    ctx.fillStyle = '#2d3436';
+    ctx.fillStyle = "#2d3436";
     ctx.fillRect(-10, 10 + move, 8, 14);
     ctx.fillRect(2, 10 - move, 8, 14);
 
     // Scarpe
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(-10, 22 + move, 10, 4);
+    ctx.fillRect(2, 22 - move, 10, 4);
+  }
+
+  _drawGirlModern(ctx) {
+    const move = this.onGround ? 0 : Math.sin(this.armPhase) * 3;
+
+    // Corpo
+    ctx.fillStyle = "#e84393";
+    ctx.beginPath();
+    ctx.roundRect(-12, -4, 24, 22, 6);
+    ctx.fill();
+
+    // Fascia UNIVPM
+    ctx.fillStyle = "#a60929";
+    ctx.fillRect(-12, 2, 24, 4);
+
+    // Testa grande
+    ctx.fillStyle = "#ffeaa7";
+    ctx.beginPath();
+    ctx.arc(0, -18, 16, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Capelli lunghi morbidi
+    ctx.fillStyle = "#2d3436";
+    ctx.beginPath();
+    ctx.arc(0, -22, 20, Math.PI, 0);
+    ctx.fill();
+    ctx.fillRect(-20, -22, 10, 28);
+    ctx.fillRect(10, -22, 10, 28);
+
+    // Occhi grandi
+    ctx.fillStyle = "#2d3436";
+    ctx.beginPath(); ctx.arc(-6, -18, 3, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(6, -18, 3, 0, Math.PI * 2); ctx.fill();
+
+    // Braccia
+    const armAngle = Math.sin(this.armPhase) * 0.25;
+
+    ctx.fillStyle = "#e84393";
+
+    ctx.save();
+    ctx.translate(-14, -2);
+    ctx.rotate(-0.15 + armAngle);
+    ctx.fillRect(-3, 0, 6, 14);
+    ctx.restore();
+
+    ctx.save();
+    ctx.translate(14, -2);
+    ctx.rotate(0.15 - armAngle);
+    ctx.fillRect(-3, 0, 6, 14);
+    ctx.restore();
+
+    // Gambe
+    ctx.fillStyle = "#2d3436";
+    ctx.fillRect(-10, 10 + move, 8, 14);
+    ctx.fillRect(2, 10 - move, 8, 14);
+
+    // Scarpe
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(-10, 22 + move, 10, 4);
     ctx.fillRect(2, 22 - move, 10, 4);
   }

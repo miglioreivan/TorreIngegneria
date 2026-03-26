@@ -1,5 +1,17 @@
 import { Leaderboard } from '../game/Leaderboard.js';
 
+function escapeHTML(str) {
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
 /**
  * Classe UI - Gestisce l'interfaccia (Start, Game Over, HUD)
  */
@@ -50,15 +62,61 @@ export class UI {
         <p>SCEGLI PERSONAGGIO</p>
         <div class="char-options">
           <div class="char-opt ${localStorage.getItem('torreIngegneriaSkin') === 'robot' || !localStorage.getItem('torreIngegneriaSkin') ? 'active' : ''}" data-skin="robot">
-            <div class="char-preview robot"></div>
+            <div class="char-preview robot">
+              <svg viewBox="0 0 40 50" width="30" height="40">
+                <rect x="11" y="34" width="6" height="12" fill="#636e72" />
+                <rect x="23" y="34" width="6" height="12" fill="#636e72" />
+                <rect x="4" y="22" width="6" height="16" fill="#b2bec3" transform="rotate(15 7 20)" />
+                <rect x="30" y="22" width="6" height="16" fill="#b2bec3" transform="rotate(-15 33 20)" />
+                <rect x="8" y="16" width="24" height="24" rx="6" fill="#8e9eab" />
+                <circle cx="20" cy="24" r="5" fill="#ff7675" />
+                <circle cx="20" cy="24" r="3" fill="#d63031" />
+                <rect x="6" y="2" width="28" height="18" rx="6" fill="#b2bec3" />
+                <rect x="10" y="6" width="20" height="10" rx="3" fill="#2d3436" />
+                <circle cx="15" cy="11" r="2.5" fill="#74b9ff" />
+                <circle cx="25" cy="11" r="2.5" fill="#74b9ff" />
+              </svg>
+            </div>
             <span>ROBOT</span>
           </div>
           <div class="char-opt ${localStorage.getItem('torreIngegneriaSkin') === 'boy' ? 'active' : ''}" data-skin="boy">
-            <div class="char-preview boy"></div>
+            <div class="char-preview boy">
+              <svg viewBox="0 0 40 50" width="30" height="40">
+                <rect x="11" y="34" width="6" height="12" fill="#2d3436" />
+                <rect x="23" y="34" width="6" height="12" fill="#2d3436" />
+                <rect x="10" y="44" width="8" height="4" fill="#fff" />
+                <rect x="22" y="44" width="8" height="4" fill="#fff" />
+                <rect x="6" y="20" width="5" height="14" fill="#3498db" transform="rotate(15 9 20)" />
+                <rect x="29" y="20" width="5" height="14" fill="#3498db" transform="rotate(-15 31 20)" />
+                <rect x="10" y="15" width="20" height="21" rx="4" fill="#3498db" />
+                <rect x="10" y="18" width="20" height="4" fill="#a60929" />
+                <circle cx="20" cy="9" r="11" fill="#ffeaa7" />
+                <path d="M 9 9 A 11 11 0 0 1 31 9 Z" fill="#2d3436" />
+                <circle cx="16" cy="11" r="2" fill="#2d3436" />
+                <circle cx="24" cy="11" r="2" fill="#2d3436" />
+              </svg>
+            </div>
             <span>BOY</span>
           </div>
           <div class="char-opt ${localStorage.getItem('torreIngegneriaSkin') === 'girl' ? 'active' : ''}" data-skin="girl">
-            <div class="char-preview girl"></div>
+            <div class="char-preview girl">
+              <svg viewBox="0 0 40 50" width="30" height="40">
+                <rect x="7" y="9" width="6" height="22" fill="#2d3436" />
+                <rect x="27" y="9" width="6" height="22" fill="#2d3436" />
+                <rect x="11" y="34" width="6" height="12" fill="#2d3436" />
+                <rect x="23" y="34" width="6" height="12" fill="#2d3436" />
+                <rect x="10" y="44" width="8" height="4" fill="#fff" />
+                <rect x="22" y="44" width="8" height="4" fill="#fff" />
+                <rect x="6" y="20" width="5" height="14" fill="#e84393" transform="rotate(15 9 20)" />
+                <rect x="29" y="20" width="5" height="14" fill="#e84393" transform="rotate(-15 31 20)" />
+                <rect x="10" y="15" width="20" height="21" rx="4" fill="#e84393" />
+                <rect x="10" y="18" width="20" height="4" fill="#a60929" />
+                <circle cx="20" cy="9" r="11" fill="#ffeaa7" />
+                <path d="M 9 9 A 11 11 0 0 1 31 9 Z" fill="#2d3436" />
+                <circle cx="16" cy="11" r="2" fill="#2d3436" />
+                <circle cx="24" cy="11" r="2" fill="#2d3436" />
+              </svg>
+            </div>
             <span>GIRL</span>
           </div>
         </div>
@@ -161,7 +219,7 @@ export class UI {
           html += `
             <div class="mini-lb-row">
               <span class="rank">#${i+1}</span>
-              <span class="name">${s.name}</span>
+              <span class="name">${escapeHTML(s.name)}</span>
               <span class="val">${s.score}m</span>
             </div>`;
         } else {
@@ -189,7 +247,7 @@ export class UI {
       let rowsHtml = scores.map((s, i) => `
         <div class="lb-row ${i === 0 ? 'top-1' : ''}">
           <span class="lb-rank">#${i + 1}</span>
-          <span class="lb-name">${s.name}</span>
+          <span class="lb-name">${escapeHTML(s.name)}</span>
           <span class="lb-val">${s.score}m</span>
         </div>
       `).join('');

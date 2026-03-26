@@ -16,8 +16,8 @@ export const CONFIG = {
   // Gioco
   BASE_ALTITUDE: 160,      // Quota di partenza (m)
   PIXELS_PER_METER: 14,    // Conversione pixel -> metri
-  GULLIVER_BOOST: 75,      // Boost in metri del bonus gulliver
-  GULLIVER_SPEED: 12,      // Velocità del boost (pixel/frame)
+  GULLIVER_BOOST: 150,     // Boost in metri del bonus gulliver
+  GULLIVER_SPEED: 18,      // Velocità del boost (pixel/frame)
   GULLIVER_MIN_DISTANCE: 100, // Distanza minima tra due bonus (m)
   PLANE_INTERVAL: 5,       // Ogni quanti metri mostrare la quota
 

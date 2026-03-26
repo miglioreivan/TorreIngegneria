@@ -165,7 +165,10 @@ export class Game {
     if (this.gulliverBoost.active) {
       if (this.gulliverBoost.currentPixels < this.gulliverBoost.totalPixels) {
         const remaining = this.gulliverBoost.totalPixels - this.gulliverBoost.currentPixels;
-        const move = Math.min(this.gulliverBoost.speed, remaining);
+        // Ease-out: rallenta dolcemente quando mancano pochi pixel
+        const easeSpeed = Math.max(3, remaining * 0.025);
+        const currentSpeed = Math.min(this.gulliverBoost.speed, easeSpeed);
+        const move = Math.min(currentSpeed, remaining);
         this.player.y -= move;
         this.player.vy = -8;
         this.player.onGround = false;
