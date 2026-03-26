@@ -91,7 +91,7 @@ export class Game {
   }
 
   canAddGulliver(alt) {
-    return alt - this.lastGulliverAlt >= CONFIG.GULLIVER_MIN_ALTITUDE_GAP;
+    return alt - this.lastGulliverAlt >= CONFIG.GULLIVER_MIN_DISTANCE;
   }
 
   createPlatform(y, type = null) {
