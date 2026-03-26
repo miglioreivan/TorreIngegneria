@@ -1,77 +1,36 @@
-import { CONFIG } from '../config.js';
+import { Leaderboard } from '../game/Leaderboard.js';
 
 /**
- * Classe UI - Gestisce l'interfaccia utente
- * Responsabilità: HUD, schermate start/game over
+ * Classe UI - Gestisce l'interfaccia (Start, Game Over, HUD)
  */
 export class UI {
   constructor() {
-    // Elemento DOM con null-check e warning
-    this.altitudeEl = document.getElementById('altitude');
-    this.scoreEl    = document.getElementById('score');
-    this.overlay    = document.getElementById('overlay');
-
-    if (!this.altitudeEl) console.warn('[UI] Elemento #altitude non trovato nel DOM.');
-    if (!this.scoreEl)    console.warn('[UI] Elemento #score non trovato nel DOM.');
-    if (!this.overlay)    console.warn('[UI] Elemento #overlay non trovato nel DOM.');
+    this.overlay = document.getElementById('overlay');
   }
 
-  /**
-   * Aggiorna l'HUD durante il gioco
-   * @param {number} altitude - Altitudine attuale
-   * @param {number} score    - Punteggio (multipli di PLANE_INTERVAL)
-   */
-  updateHUD(altitude, score) {
-    if (this.altitudeEl) this.altitudeEl.textContent = Math.floor(altitude);
-    if (this.scoreEl)    this.scoreEl.textContent    = score;
-  }
-
-  /**
-   * Mostra la schermata iniziale
-   * @param {number} highScore - Record attuale
-   */
   showStartScreen(highScore) {
-    if (!this.overlay) return;
-
     this.overlay.innerHTML = `
       <div class="home-header">Quanto è alta la torre di Ingegneria?</div>
       
-      <!-- Logo Torre SVG Brutalista -->
-      <svg class="tower-logo" viewBox="0 0 80 120">
-        <!-- Fondamenta / Scala (Base brutalista ampia) -->
-        <path d="M10 110 L70 110 L60 95 L20 95 Z" fill="#7f8c8d" />
-        
-        <!-- Piani in cemento (blocchi sovrapposti) -->
-        <!-- Corpo principale -->
-        <rect x="20" y="30" width="40" height="70" fill="#95a5a6" />
-        
-        <!-- Piani sporgenti modularmente (stile brutalista) -->
-        <rect x="18" y="90" width="44" height="6" fill="#7f8c8d" />
-        <rect x="18" y="75" width="44" height="6" fill="#7f8c8d" />
-        <rect x="18" y="60" width="44" height="6" fill="#7f8c8d" />
-        <rect x="18" y="45" width="44" height="6" fill="#7f8c8d" />
-        
-        <!-- Griglia di finestre in vetro blu -->
-        <g fill="#3498db" opacity="0.6">
-          <!-- Riga 1 -->
+      <!-- Logo Torre Brutalista (SVG) -->
+      <svg class="tower-logo" viewBox="0 0 80 120" width="120" height="180">
+        <rect x="5" y="100" width="70" height="15" fill="#5d6d7e" rx="2" />
+        <rect x="15" y="30" width="50" height="70" fill="#bdc3c7" />
+        <rect x="15" y="30" width="10" height="70" fill="#95a5a6" /> 
+        <g fill="#3498db" opacity="0.4">
           <rect x="24" y="35" width="6" height="6" />
           <rect x="37" y="35" width="6" height="6" />
           <rect x="50" y="35" width="6" height="6" />
-          <!-- Riga 2 -->
           <rect x="24" y="50" width="6" height="6" />
           <rect x="37" y="50" width="6" height="6" />
           <rect x="50" y="50" width="6" height="6" />
-          <!-- Riga 3 -->
           <rect x="24" y="65" width="6" height="6" />
           <rect x="37" y="65" width="6" height="6" />
           <rect x="50" y="65" width="6" height="6" />
-          <!-- Riga 4 -->
           <rect x="24" y="80" width="6" height="6" />
           <rect x="37" y="80" width="6" height="6" />
           <rect x="50" y="80" width="6" height="6" />
         </g>
-
-        <!-- Sommità / Terrazza tecnica (Ora parte integrante con finestre) -->
         <rect x="25" y="10" width="30" height="20" fill="#95a5a6" />
         <rect x="23" y="22" width="34" height="5" fill="#7f8c8d" />
         <g fill="#3498db" opacity="0.6">
@@ -79,8 +38,6 @@ export class UI {
           <rect x="44" y="13" width="6" height="6" />
         </g>
         <rect x="22" y="5" width="36" height="5" fill="#a60929" />
-        
-        <!-- Dettagli ombre cemento -->
         <rect x="20" y="30" width="2" height="70" fill="rgba(0,0,0,0.1)" />
         <rect x="20" y="30" width="40" height="2" fill="rgba(255,255,255,0.2)" />
       </svg>
@@ -100,7 +57,10 @@ export class UI {
         </div>
       </div>
       
-      <div id="startBtn" class="start-btn">GIOCA ORA</div>
+      <div class="menu-buttons">
+        <div id="startBtn" class="start-btn">GIOCA ORA</div>
+        <div id="lbBtn" class="lb-btn secondary-btn">CLASSIFICA</div>
+      </div>
 
       <div class="social-links">
         <a href="https://www.instagram.com/acu_gulliver/" target="_blank" class="social-item instagram">
@@ -126,32 +86,79 @@ export class UI {
       </div>
     `;
 
-    this.overlay.classList.remove('hidden');
+    this.overlay.className = 'visible start-screen';
   }
 
-  /**
-   * Mostra la schermata di game over
-   * @param {number} score     - Punteggio ottenuto
-   * @param {number} highScore - Record
-   */
   showGameOver(score, highScore) {
-    if (!this.overlay) return;
-
     this.overlay.innerHTML = `
-      <div class="game-over-title">CADUTA!</div>
+      <div class="game-over-title">GAME OVER</div>
+      
       <div class="result-stats">
-        <div class="final-score">Quota raggiunta: <span>Q${CONFIG.BASE_ALTITUDE + score}</span></div>
-        <div class="best-score">Record: Q${CONFIG.BASE_ALTITUDE + highScore}m</div>
+        <p class="final-score">ALTEZZA: <span>${score}m</span></p>
+        <p class="best-score">RECORD PERSONALE: ${highScore}m</p>
       </div>
-      <div id="retryBtn" class="start-btn">RIPROVA</div>
+
+      <div class="save-score-card">
+        <h3>SALVA RECORD GLOBALE</h3>
+        <div class="input-row">
+          <input type="text" id="playerName" placeholder="NOME / NICKNAME" maxlength="15" />
+          <div id="saveBtn" class="save-btn">INVIA</div>
+        </div>
+        <p id="saveStatus" class="save-status"></p>
+      </div>
+
+      <div class="menu-buttons horizontal">
+        <div id="retryBtn" class="start-btn">RIPROVA</div>
+        <div id="lbBtnInGame" class="lb-btn secondary-btn">CLASSIFICA</div>
+      </div>
+
+      <div class="retry-text">CLICCA PER RICOMINCIARE</div>
     `;
-    this.overlay.classList.remove('hidden');
+    this.overlay.className = 'visible game-over-screen';
   }
 
-  /** Nasconde l'overlay */
-  hideOverlay() {
-    if (this.overlay) this.overlay.classList.add('hidden');
+  async showLeaderboard() {
+    this.overlay.classList.add('loading');
+    this.overlay.innerHTML = `<div class="loader-container"><div class="loader"></div><p>CARICAMENTO CLASSIFICA...</p></div>`;
+
+    try {
+      const scores = await Leaderboard.getTopScores(10);
+      
+      let rowsHtml = scores.map((s, i) => `
+        <div class="lb-row ${i === 0 ? 'top-1' : ''}">
+          <span class="lb-rank">#${i + 1}</span>
+          <span class="lb-name">${s.name}</span>
+          <span class="lb-val">${s.score}m</span>
+        </div>
+      `).join('');
+
+      this.overlay.innerHTML = `
+        <div class="leaderboard-modal">
+          <div class="lb-header">
+            <h3>TOP 10 MONDIALE</h3>
+            <div id="closeLb" class="close-btn">×</div>
+          </div>
+          <div class="lb-body">
+            ${rowsHtml || '<p class="empty-msg">NESSUN RECORD ANCORA</p>'}
+          </div>
+          <div class="lb-footer">👑 SCALA LA TORRE 👑</div>
+        </div>
+      `;
+      this.overlay.className = 'visible leaderboard-view';
+    } catch (err) {
+      this.overlay.innerHTML = `
+        <div class="error-msg">
+          <p>ERRORE NEL RECUPERO DATI</p>
+          <div id="closeLb" class="start-btn">TORNA AL MENU</div>
+        </div>
+      `;
+    }
+  }
+
+  updateHUD(altitude, score) {
+    const altEl = document.getElementById('altitude');
+    const scoreEl = document.getElementById('score');
+    if (altEl) altEl.textContent = altitude;
+    if (scoreEl) scoreEl.textContent = score;
   }
 }
-
-export default UI;

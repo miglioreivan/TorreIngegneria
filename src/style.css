@@ -354,52 +354,181 @@ body {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.start-btn:hover {
-  background: rgba(255, 230, 109, 0.2);
+/* Buttons layout */
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 30px;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(1.02); }
+.menu-buttons.horizontal {
+  flex-direction: row;
+  justify-content: center;
+  gap: 20px;
 }
 
-/* Schermata game over */
-.game-over-title {
+.secondary-btn {
   font-family: 'Orbitron', monospace;
-  font-size: 26px;
-  font-weight: 900;
-  color: #a60929;
-  margin-bottom: 20px;
-  text-shadow: 0 0 20px rgba(166, 9, 41, 0.6);
-}
-
-.result-stats {
-  text-align: center;
-  margin-bottom: 25px;
-}
-
-.final-score {
-  font-family: 'Orbitron', monospace;
-  font-size: 18px;
+  font-size: 13px;
+  font-weight: 700;
   color: #fff;
-  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 12px 25px;
+  border-radius: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
 }
 
-.final-score span {
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Save Score Card */
+.save-score-card {
+  background: rgba(166, 9, 41, 0.1);
+  border: 1px solid rgba(166, 9, 41, 0.3);
+  padding: 15px;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  width: 90%;
+  max-width: 320px;
+}
+
+.save-score-card h3 {
+  font-size: 12px;
   color: #a60929;
-  font-size: 30px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.save-score-card input {
+  flex: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 10px;
+  border-radius: 6px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.save-btn {
+  background: #a60929;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.3s;
+}
+
+.save-status {
+  font-size: 11px;
+  margin-top: 8px;
+  height: 14px;
+}
+
+/* Leaderboard Modal */
+.leaderboard-modal {
+  background: #1a1a2e;
+  border: 2px solid #a60929;
+  width: 90%;
+  max-width: 340px;
+  border-radius: 15px;
+  padding: 0;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+  animation: slideIn 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.lb-header {
+  background: #a60929;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lb-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 16px;
+}
+
+.close-btn {
+  font-size: 24px;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.lb-body {
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.lb-row {
+  display: flex;
+  padding: 12px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  align-items: center;
+  gap: 10px;
+}
+
+.lb-row.top-1 {
+  background: rgba(255, 230, 109, 0.1);
+  border-left: 4px solid #ffe66d;
+}
+
+.lb-rank {
+  font-weight: 900;
+  color: #a60929;
+  width: 30px;
+}
+
+.lb-name {
+  flex: 1;
+  text-align: left;
+  font-weight: 700;
+}
+
+.lb-val {
+  color: #ffe66d;
   font-weight: 900;
 }
 
-.best-score {
-  font-size: 14px;
-  color: #ffe66d;
+.lb-footer {
+  padding: 12px;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.retry-text {
-  font-family: 'Orbitron', monospace;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 2px;
-  animation: blink 1.5s ease-in-out infinite;
+.loader {
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #a60929;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
 }
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.error-msg { text-align: center; padding: 20px; }
