@@ -355,7 +355,6 @@ export class Game {
     };
 
     this.canvas.addEventListener('touchstart', handleTouch, { passive: false });
-    this.canvas.addEventListener('touchmove',  handleTouch, { passive: false });
     this.canvas.addEventListener('touchend',    resetTouchInput, { passive: false });
     this.canvas.addEventListener('touchcancel', resetTouchInput, { passive: false });
 

@@ -91,8 +91,12 @@ export class UI {
 
       <div class="controls-info">
         <div class="control-item">
-          <span class="key-badge">← →</span>
-          <span>Muovi con le frecce o A-D</span>
+          <span class="key-badge">PC</span>
+          <span>Frecce o A-D</span>
+        </div>
+        <div class="control-item">
+          <span class="key-badge">MOBILE</span>
+          <span>Tocca i lati</span>
         </div>
       </div>
       
