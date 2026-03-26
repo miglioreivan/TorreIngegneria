@@ -35,6 +35,19 @@ export class Background {
       });
     }
 
+    // Satelliti e UFO (Space objects)
+    this.spaceObjects = [];
+    for (let i = 0; i < 3; i++) {
+      this.spaceObjects.push({
+        x: Math.random() * 400,
+        y: Math.random() * 600,
+        type: Math.random() > 0.5 ? 'satellite' : 'ufo',
+        speed: 0.1 + Math.random() * 0.3,
+        scale: 0.8 + Math.random() * 0.5,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
     this.weatherType = 'clear'; // clear, rain, snow
     this.lastWeatherChange = 0;
   }
@@ -46,6 +59,13 @@ export class Background {
     this.clouds.forEach(c => {
       c.x += c.speed;
       if (c.x > 400 + 100) c.x = -150;
+    });
+
+    // Movimento oggetti spaziali
+    this.spaceObjects.forEach(s => {
+      s.x += s.speed;
+      s.phase += 0.05;
+      if (s.x > 450) s.x = -50;
     });
 
     // Gestione meteo randomica
@@ -115,10 +135,11 @@ export class Background {
       this.drawClouds(ctx, cloudAlpha);
     }
 
-    // Stelle (compaiono salendo)
+    // Stelle e Oggetti spaziali (compaiono salendo)
     if (altNorm > 0.4) {
-      const starIntensity = (altNorm - 0.4) / 0.6;
-      this.drawStars(ctx, starIntensity);
+      const spaceIntensity = (altNorm - 0.4) / 0.6;
+      this.drawStars(ctx, spaceIntensity);
+      this.drawSpaceObjects(ctx, spaceIntensity);
     }
 
     // Meteo
@@ -127,6 +148,47 @@ export class Background {
     }
 
     this.drawInfiniteTower(ctx, cameraY);
+  }
+
+  drawSpaceObjects(ctx, intensity) {
+    ctx.save();
+    ctx.globalAlpha = intensity;
+    this.spaceObjects.forEach(s => {
+      ctx.save();
+      ctx.translate(s.x, s.y + Math.sin(s.phase) * 10);
+      ctx.scale(s.scale, s.scale);
+
+      if (s.type === 'satellite') {
+        // Pannelli solari
+        ctx.fillStyle = '#3498db';
+        ctx.fillRect(-15, -2, 30, 4);
+        // Corpo satellite
+        ctx.fillStyle = '#bdc3c7';
+        ctx.fillRect(-4, -4, 8, 8);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(-4, -4, 8, 8);
+      } else {
+        // UFO
+        ctx.fillStyle = '#95a5a6';
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 12, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Cupola
+        ctx.fillStyle = 'rgba(52, 152, 219, 0.6)';
+        ctx.beginPath();
+        ctx.arc(0, -2, 4, Math.PI, 0);
+        ctx.fill();
+        // Luci rotanti
+        const lightX = Math.sin(s.phase * 2) * 8;
+        ctx.fillStyle = '#e74c3c';
+        ctx.beginPath();
+        ctx.arc(lightX, 1, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.restore();
+    });
+    ctx.restore();
   }
 
   drawAstro(ctx, altNorm) {
