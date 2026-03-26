@@ -215,7 +215,7 @@ export class Game {
     this.score = Math.floor(rawScore / CONFIG.PLANE_INTERVAL) * CONFIG.PLANE_INTERVAL;
 
     const displayAltitude = Math.floor(this.currentAltitude / CONFIG.PLANE_INTERVAL) * CONFIG.PLANE_INTERVAL;
-    this.generatePlatforms();
+    this.updatePlatforms();
     this.background.update(this.cameraY, this.currentAltitude);
     this.ui.updateHUD(displayAltitude, this.score);
   }
